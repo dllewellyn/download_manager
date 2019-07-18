@@ -58,7 +58,7 @@ class DownloadManager {
 
       if (!shouldDownload) {
         if (file.destinationFile.existsSync()) {
-
+          _newFile(file.destinationFile);
         }
         return Future.value();
       }
