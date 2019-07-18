@@ -23,7 +23,6 @@ import 'package:download_manager/src/store.dart';
 /// be written to disk.
 ///
 class DownloadManager {
-
   /// Store to use for tracking when files were downloaded
   final Store _store;
 
@@ -31,7 +30,8 @@ class DownloadManager {
   Stream<File> get fileStream => _innerStream.stream;
 
   // Stream controller
-  final StreamController<File> _innerStream = StreamController<File>.broadcast();
+  final StreamController<File> _innerStream =
+      StreamController<File>.broadcast();
 
   DownloadManager(this._store);
 
@@ -54,7 +54,6 @@ class DownloadManager {
     await _downloadNow(file)
         .catchError((err) => _innerStream.addError(err))
         .then((b) {
-
       if (file.destinationFile.existsSync()) {
         _innerStream.add(file.destinationFile);
       } else {

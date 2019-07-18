@@ -7,14 +7,14 @@ abstract class Store {
 }
 
 class SharedPreferencesStore implements Store {
-
   @override
   Future<bool> shouldDownload(File file) {
     return SharedPreferences.getInstance().then((p) {
       var retVal = false;
 
       if (p.containsKey(file.absolute.path)) {
-        retVal = DateTime.parse(p.getString(file.absolute.path)).isAfter(DateTime.now());
+        retVal = DateTime.parse(p.getString(file.absolute.path))
+            .isAfter(DateTime.now());
       }
 
       return retVal;
@@ -23,6 +23,6 @@ class SharedPreferencesStore implements Store {
 
   @override
   void storeDate(File file) => SharedPreferences.getInstance().then((p) {
-    p.setString(file.absolute.path, DateTime.now().toString());
-  });
+        p.setString(file.absolute.path, DateTime.now().toString());
+      });
 }
