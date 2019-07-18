@@ -1,5 +1,7 @@
 # download_manager
 
+[![Build Status](https://app.bitrise.io/app/c35158618f4a0c7f/status.svg?token=Iw1BuVdu1EHJ396NqTFGAg)](https://app.bitrise.io/app/c35158618f4a0c7f)
+
 A package for automatically downloading and storing files
 
 ## Getting Started
