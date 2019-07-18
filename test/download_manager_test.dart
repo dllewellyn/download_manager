@@ -26,23 +26,31 @@ void main() {
     var downloadManager = DownloadManager(MockStore());
     expectLater(downloadManager.fileStream, emits(testBFile));
 
-    await downloadManager.add(DownloadableFileBasic(() => "Test string", testBFile));
+    await downloadManager
+        .add(DownloadableFileBasic(() => "Test string", testBFile));
     setupFile(testBFile);
   });
 
-  test('test that downloader will double download if the date time is null', () async {
+  test('test that downloader will double download if the date time is null',
+      () async {
     File testCFile = File("test_c.txt");
     setupFile(testCFile);
 
     var downloadManager = DownloadManager(MockStore());
-    expectLater(downloadManager.fileStream, emitsInOrder([testCFile, testCFile]));
+    expectLater(
+        downloadManager.fileStream, emitsInOrder([testCFile, testCFile]));
+    expectLater(downloadManager.allFiles, emits([testCFile]));
 
-    await downloadManager.add(DownloadableFileBasic(() => "Test string", testCFile));
-    await downloadManager.add(DownloadableFileBasic(() => "Test string", testCFile));
+    await downloadManager
+        .add(DownloadableFileBasic(() => "Test string", testCFile));
+    await downloadManager
+        .add(DownloadableFileBasic(() => "Test string", testCFile));
     setupFile(testCFile);
   });
 
-  test('test that downloader will not double download if the date is not exceeded', () async {
+  test(
+      'test that downloader will not double download if the date is not exceeded',
+      () async {
     File testCFile = File("test_c.txt");
     setupFile(testCFile);
 
@@ -54,15 +62,48 @@ void main() {
 
     var downloadManager = DownloadManager(store);
     expectLater(downloadManager.fileStream, emits(testCFile));
+    expectLater(downloadManager.allFiles, emits([testCFile]));
 
-    await downloadManager.add(DownloadableFileBasic(() => "Test string", testCFile, dateTime: null));
+    await downloadManager.add(
+        DownloadableFileBasic(() => "Test string", testCFile, dateTime: null));
     assert(testCFile.existsSync());
-    await downloadManager.add(DownloadableFileBasic(() => "Abc", testCFile, dateTime: date));
-
+    await downloadManager
+        .add(DownloadableFileBasic(() => "Abc", testCFile, dateTime: date));
 
     // The second file should not have been downloaded - only the first
     expect(testCFile.readAsStringSync(), "Test string");
     setupFile(testCFile);
+  });
+
+  test("test that the clear button deletes all files", () async {
+    File testFileD = File("test_file_e.txt");
+    File testFileE = File("test_file_d.txt");
+
+    setupFile(testFileE);
+    setupFile(testFileD);
+
+    var downloadFile = DownloadableFileBasic(() => "Test string", testFileE);
+    var downloadFileOther =
+        DownloadableFileBasic(() => "Test string", testFileD);
+
+    var downloadManager = DownloadManager(MockStore());
+    expectLater(
+        downloadManager.allFiles,
+        emitsInOrder([
+          [testFileE],
+          [testFileE, testFileD],
+          []
+        ]));
+    await downloadManager.add(downloadFile);
+    await downloadManager.add(downloadFileOther);
+
+    assert(testFileD.existsSync());
+    assert(testFileE.existsSync());
+
+    await downloadManager.clear();
+
+    assert(!testFileD.existsSync());
+    assert(!testFileE.existsSync());
   });
 }
 

@@ -1,6 +1,6 @@
 name: download_manager
 description: A package for automatically downloading and storing files. You can use this package to pass a list of files which will be downloaded and stored, with notifications sent via a stream when a file has been downloaded.
-version: 1.0.0
+version: 1.0.1
 author: Daniel Llewellyn <Danieln.llewellyn@gmail.com>
 homepage: https://github.com/dllewellyn/download_manager
 

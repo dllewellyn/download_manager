@@ -76,8 +76,11 @@ class DownloadManager {
     });
   }
 
-  void clear() {
-    cache.forEach((f) => f.delete());
+  Future clear() async {
+    for (File f in cache) {
+      await f.delete();
+    }
+
     cache.clear();
     _allFilesStream.add(cache);
   }
