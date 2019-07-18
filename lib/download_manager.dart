@@ -29,13 +29,23 @@ class DownloadManager {
   /// A stream with the files which have been downloaded.
   Stream<File> get fileStream => _innerStream.stream;
 
-  // Stream controller
+  Stream<List<File>> get allFiles => _allFilesStream.stream;
+
+  final StreamController<List<File>> _allFilesStream =
+      StreamController<List<File>>.broadcast()..add(List());
   final StreamController<File> _innerStream =
       StreamController<File>.broadcast();
 
+  final List<File> cache = List();
+
   DownloadManager(this._store);
 
-  static DownloadManager instance = DownloadManager(SharedPreferencesStore());
+  static final DownloadManager _instance =
+      DownloadManager(SharedPreferencesStore());
+
+  factory DownloadManager.instance() {
+    return _instance;
+  }
 
   /// Add a file to the download queue
   ///
@@ -47,6 +57,9 @@ class DownloadManager {
       var shouldDownload = await _store.shouldDownload(file.destinationFile);
 
       if (!shouldDownload) {
+        if (file.destinationFile.existsSync()) {
+
+        }
         return Future.value();
       }
     }
@@ -55,12 +68,18 @@ class DownloadManager {
         .catchError((err) => _innerStream.addError(err))
         .then((b) {
       if (file.destinationFile.existsSync()) {
-        _innerStream.add(file.destinationFile);
+        _newFile(file.destinationFile);
       } else {
         _innerStream
             .addError("Failed to download to ${file.destinationFile.path}");
       }
     });
+  }
+
+  void _newFile(File file) {
+    cache.add(file);
+    _innerStream.add(file);
+    _allFilesStream.add(cache);
   }
 
   Future<File> _downloadNow(DownloadableFile file) async {
@@ -76,6 +95,7 @@ class DownloadManager {
 
   void dispose() {
     _innerStream.close();
+    _allFilesStream.close();
   }
 }
 
