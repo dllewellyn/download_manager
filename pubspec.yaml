@@ -10,10 +10,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_preferences: ">=0.5.3 <0.6.0"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mockito: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

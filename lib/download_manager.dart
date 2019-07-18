@@ -3,6 +3,8 @@ library download_manager;
 import 'dart:async';
 import 'dart:io';
 
+import 'package:download_manager/src/store.dart';
+
 /// Download manager class. With this class we can download files asynchronously
 /// and update the calling application via a stream when the data is available.
 ///
@@ -21,17 +23,19 @@ import 'dart:io';
 /// be written to disk.
 ///
 class DownloadManager {
+
+  /// Store to use for tracking when files were downloaded
+  final Store _store;
+
   /// A stream with the files which have been downloaded.
   Stream<File> get fileStream => _innerStream.stream;
 
-  final List<DownloadableFile> _downloadableFiles = List();
-
   // Stream controller
-  final StreamController<File> _innerStream = StreamController<File>();
+  final StreamController<File> _innerStream = StreamController<File>.broadcast();
 
-  static DownloadManager instance = DownloadManager._init();
+  DownloadManager(this._store);
 
-  DownloadManager._init();
+  static DownloadManager instance = DownloadManager(SharedPreferencesStore());
 
   /// Add a file to the download queue
   ///
@@ -39,6 +43,14 @@ class DownloadManager {
   ///
   /// @note results will appear in [fileStream]
   Future add(DownloadableFile file) async {
+    if (file.dateTime != null) {
+      var shouldDownload = await _store.shouldDownload(file.destinationFile);
+
+      if (!shouldDownload) {
+        return Future.value();
+      }
+    }
+
     await _downloadNow(file)
         .catchError((err) => _innerStream.addError(err))
         .then((b) {

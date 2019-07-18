@@ -19,3 +19,16 @@ E.g. you can create one with a function (returning something can be written to f
 You can also, optionally, set an expiry date time to your DownloadableFileBasic class. The purpose of this is 
 to have a file which is only downloaded if the expiry date on the file is newer than the one you've already downloaded
 
+### Downloading a file
+
+Insert your downloadable file into the DownloadManager
+
+```
+DownloadManager.instance.add(DownloadableFileBasic(() => "Test string", testBFile));
+
+```
+Results in the stream
+
+```
+expectLater(DownloadManager.instance.fileStream, emits(testBFile));
+```
