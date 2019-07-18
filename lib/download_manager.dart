@@ -76,6 +76,12 @@ class DownloadManager {
     });
   }
 
+  void clear() {
+    cache.forEach((f) => f.delete());
+    cache.clear();
+    _allFilesStream.add(cache);
+  }
+
   void _newFile(File file) {
     cache.add(file);
     _innerStream.add(file);
