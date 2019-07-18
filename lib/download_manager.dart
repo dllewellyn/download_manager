@@ -36,7 +36,7 @@ class DownloadManager {
   final StreamController<File> _innerStream =
       StreamController<File>.broadcast();
 
-  final List<File> cache = List();
+  final Set<File> cache = Set();
 
   DownloadManager(this._store);
 
@@ -82,13 +82,13 @@ class DownloadManager {
     }
 
     cache.clear();
-    _allFilesStream.add(cache);
+    _allFilesStream.add(cache.toList());
   }
 
   void _newFile(File file) {
     cache.add(file);
     _innerStream.add(file);
-    _allFilesStream.add(cache);
+    _allFilesStream.add(cache.toList());
   }
 
   Future<File> _downloadNow(DownloadableFile file) async {

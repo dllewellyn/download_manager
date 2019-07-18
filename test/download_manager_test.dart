@@ -49,8 +49,7 @@ void main() {
   });
 
   test(
-      'test that downloader will not double download if the date is not exceeded',
-      () async {
+      'test that downloader will not double download if the date is not exceeded', () async {
     File testCFile = File("test_c.txt");
     setupFile(testCFile);
 
